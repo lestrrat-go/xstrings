@@ -22,7 +22,7 @@ func expectInLowerCamel(cases []Case) []Case {
 		case "JSONData":
 			ret[i].Expected = "jsonData"
 		case "ID":
-			ret[i].Expected = "ID"
+			ret[i].Expected = "id"
 		default:
 			ret[i].Expected = xstrings.LcFirst(c.Expected)
 		}
