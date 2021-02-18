@@ -6,6 +6,7 @@ type Option = option.Interface
 
 type identSnakeDelimiter struct{}
 type identSnakeScreaming struct{}
+type identCamelLower struct{}
 
 type SnakeOption interface {
 	Option
@@ -13,8 +14,15 @@ type SnakeOption interface {
 }
 
 type snakeOption struct{ Option }
-
 func (*snakeOption) snakeOption() {}
+
+type CamelOption interface {
+	Option
+	camelOption()
+}
+
+type camelOption struct{ Option }
+func (*camelOption) camelOption() {}
 
 // WithDelimiter allows you to change the delimiter used in snake case coversion
 func WithDelimiter(r rune) SnakeOption {
@@ -25,4 +33,10 @@ func WithDelimiter(r rune) SnakeOption {
 // words in all uppercase (e.g. SNAKE_CASE)
 func WithScreaming(v bool) SnakeOption {
 	return &snakeOption{option.New(identSnakeScreaming{}, v)}
+}
+
+// WithLowerCamel specifies that the first letter of a camel cased string should
+// be lower cased
+func WithLowerCamel(v bool) CamelOption {
+	return &camelOption{option.New(identCamelLower{}, v)}
 }

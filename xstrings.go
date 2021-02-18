@@ -55,7 +55,68 @@ func UcFirst(s string) string {
 	return convertFirstRune(strings.TrimSpace(s), unicode.ToUpper)
 }
 
+func Camel(s string, options ...CamelOption) string {
+	s = strings.TrimSpace(s)
+	if len(s) == 0 {
+		return s
+	}
+
+	var lowerCamel bool
+	for _, option := range options {
+		switch option.Ident() {
+		case identCamelLower{}:
+			lowerCamel = option.Value().(bool)
+		}
+	}
+
+	b := getBuilder()
+	defer releaseBuilder(b)
+	b.Grow(len(s))
+
+	const (
+		isFirst = 1 << (iota + 1)
+		isBegin
+		isLetter
+		isDigit
+	)
+
+	var prev int8 = isFirst
+	for len(s) > 0 {
+		r, n := utf8.DecodeRuneInString(s)
+		s = s[n:]
+
+		var cur int8
+		switch {
+		case unicode.IsLetter(r):
+			cur |= isLetter
+		case unicode.IsDigit(r):
+			cur |= isDigit
+		}
+
+		if lowerCamel && prev&isFirst == isFirst {
+			b.WriteRune(unicode.ToLower(r))
+			cur |= isBegin
+		} else if cur&isDigit == isDigit || cur&isLetter == isLetter {
+			if prev&isDigit == 0 && prev&isBegin == isBegin {
+				r = unicode.ToLower(r)
+			} else if prev&isLetter == 0 || prev&isDigit == isDigit && cur&isLetter == isLetter {
+				r = unicode.ToUpper(r)
+				cur |= isBegin
+			}
+			b.WriteRune(r)
+		}
+
+		prev = cur
+	}
+	return b.String()
+}
+
 func Snake(s string, options ...SnakeOption) string {
+	s = strings.TrimSpace(s)
+	if len(s) == 0 {
+		return s
+	}
+
 	var delimiter rune = '_'
 	var screaming bool
 	for _, option := range options {
@@ -69,11 +130,7 @@ func Snake(s string, options ...SnakeOption) string {
 
 	b := getBuilder()
 	defer releaseBuilder(b)
-
-	s = strings.TrimSpace(s)
-	if len(s) == 0 {
-		return s
-	}
+	b.Grow(len(s) + 2)
 
 	const (
 		isFirst = 1 << (iota + 1) // Only set if this is the first rune

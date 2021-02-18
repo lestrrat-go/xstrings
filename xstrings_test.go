@@ -13,6 +13,15 @@ type Case struct {
 	Expected string
 }
 
+func expectInLowerCamel(cases []Case) []Case {
+	ret := make([]Case, len(cases))
+	for i, c := range cases {
+		ret[i].Src = c.Src
+		ret[i].Expected = xstrings.LcFirst(c.Expected)
+	}
+	return ret
+}
+
 func expectInAllUpper(cases []Case) []Case {
 	ret := make([]Case, len(cases))
 	for i, c := range cases {
@@ -34,6 +43,19 @@ func expectInAlternateDelimiter(cases []Case, delim string) []Case {
 
 func TestXstrings(t *testing.T) {
 	t.Run("String Functions", func(t *testing.T) {
+		camelTestCases := []Case{
+			{"test_case", "TestCase"},
+			{"test.case", "TestCase"},
+			{"test", "Test"},
+			{"TestCase", "TestCase"},
+			{" test  case ", "TestCase"},
+			{"", ""},
+			{"many_many_words", "ManyManyWords"},
+			{"AnyKind of_string", "AnyKindOfString"},
+			{"odd-fix", "OddFix"},
+			{"numbers2And55with000", "Numbers2And55With000"},
+			{"ID", "Id"},
+		}
 		snakeTestCases := []Case{
 			{"testCase", "test_case"},
 			{"TestCase", "test_case"},
@@ -100,6 +122,16 @@ func TestXstrings(t *testing.T) {
 				Name:  "Screaming Snake",
 				Func:  func(s string) string { return xstrings.Snake(s, xstrings.WithDelimiter('~')) },
 				Cases: expectInAlternateDelimiter(snakeTestCases, "~"),
+			},
+			{
+				Name:  "Camel",
+				Func:  func(s string) string { return xstrings.Camel(s) },
+				Cases: camelTestCases,
+			},
+			{
+				Name:  "Camel Lower",
+				Func:  func(s string) string { return xstrings.Camel(s, xstrings.WithLowerCamel(true)) },
+				Cases: expectInLowerCamel(camelTestCases),
 			},
 		}
 		for _, tc := range testcases {

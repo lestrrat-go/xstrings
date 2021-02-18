@@ -15,4 +15,5 @@ decoding routines before processing the strings
 | LcFirst(string) string | Converts first rune of string to lower case |
 | UcFirst(string) string | Converts first rune of string to upper case |
 | Snake(string, SnakeOptions...) | Converts a string into snake_case. Supports alternate delimiters and SCREAMING case via options |
+| Camel(string, CamelOptions...) | Converts a string into CamelCase. Supports lowerCaseCame via options|
 
