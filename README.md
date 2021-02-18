@@ -1,4 +1,4 @@
-# github.com/lestrrat-go/xstrings ![https://pkg.go.dev/badge/github.com/lestrrat-go/xstrings.svg)](https://pkg.go.dev/github.com/lestrrat-go/xstrings) [![codecov.io](http://codecov.io/github/lestrrat-go/xstrings/coverage.svg?branch=main)](http://codecov.io/github/lestrrat-go/xstrings?branch=main)
+# github.com/lestrrat-go/xstrings ![](https://github.com/lestrrat-go/jwx/workflows/CI/badge.svg) [![Go reference](https://pkg.go.dev/badge/github.com/lestrrat-go/xstrings.svg)](https://pkg.go.dev/github.com/lestrrat-go/xstrings) [![codecov.io](http://codecov.io/github/lestrrat-go/xstrings/coverage.svg?branch=main)](http://codecov.io/github/lestrrat-go/xstrings?branch=main)
 
 Unicode-aware string utilities for Go
 
