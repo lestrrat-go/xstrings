@@ -17,7 +17,15 @@ func expectInLowerCamel(cases []Case) []Case {
 	ret := make([]Case, len(cases))
 	for i, c := range cases {
 		ret[i].Src = c.Src
-		ret[i].Expected = xstrings.LcFirst(c.Expected)
+
+		switch c.Expected {
+		case "JSONData":
+			ret[i].Expected = "jsonData"
+		case "ID":
+			ret[i].Expected = "ID"
+		default:
+			ret[i].Expected = xstrings.LcFirst(c.Expected)
+		}
 	}
 	return ret
 }
@@ -54,7 +62,8 @@ func TestXstrings(t *testing.T) {
 			{"AnyKind of_string", "AnyKindOfString"},
 			{"odd-fix", "OddFix"},
 			{"numbers2And55with000", "Numbers2And55With000"},
-			{"ID", "Id"},
+			{"ID", "ID"},
+			{"json_data", "JSONData"},
 		}
 		snakeTestCases := []Case{
 			{"testCase", "test_case"},

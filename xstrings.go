@@ -55,6 +55,26 @@ func UcFirst(s string) string {
 	return convertFirstRune(strings.TrimSpace(s), unicode.ToUpper)
 }
 
+func flushCamel(dst, src *strings.Builder, lowerCamel bool) {
+	tmp := src.String()
+
+	// check for acronyms first
+	acr, ok := acronyms[tmp]
+	if ok {
+		tmp = acr
+
+		// first word, and an acryonym
+		// well, lowerCamel usually means just run LcFirst, but what if the word
+		// is an acronym? for example, JSON... jSON? hmm. in this implementation
+		// we will lower case the entire thing, cause it looks better
+		if dst.Len() == 0 && lowerCamel {
+			tmp = strings.ToLower(tmp)
+		}
+	}
+	dst.WriteString(tmp)
+	src.Reset()
+}
+
 func Camel(s string, options ...CamelOption) string {
 	s = strings.TrimSpace(s)
 	if len(s) == 0 {
@@ -80,6 +100,10 @@ func Camel(s string, options ...CamelOption) string {
 		isDigit
 	)
 
+	// Buffer this by words
+	word := getBuilder()
+	defer releaseBuilder(word)
+
 	var prev int8 = isFirst
 	for len(s) > 0 {
 		r, n := utf8.DecodeRuneInString(s)
@@ -93,21 +117,33 @@ func Camel(s string, options ...CamelOption) string {
 			cur |= isDigit
 		}
 
-		if lowerCamel && prev&isFirst == isFirst {
-			b.WriteRune(unicode.ToLower(r))
+		if prev&isFirst == isFirst {
+			word.WriteRune(unicode.ToUpper(r)) // always uppercase. we'll handle lowerCamel later
 			cur |= isBegin
 		} else if cur&isDigit == isDigit || cur&isLetter == isLetter {
 			if prev&isDigit == 0 && prev&isBegin == isBegin {
 				r = unicode.ToLower(r)
 			} else if prev&isLetter == 0 || prev&isDigit == isDigit && cur&isLetter == isLetter {
+				// Flush previous word
+				flushCamel(b, word, lowerCamel)
+
 				r = unicode.ToUpper(r)
 				cur |= isBegin
 			}
-			b.WriteRune(r)
+			word.WriteRune(r)
 		}
 
 		prev = cur
 	}
+
+	if word.Len() > 0 {
+		flushCamel(b, word, lowerCamel)
+	}
+
+	if lowerCamel {
+		return LcFirst(b.String())
+	}
+
 	return b.String()
 }
 
