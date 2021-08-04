@@ -50,7 +50,9 @@ func expectInAlternateDelimiter(cases []Case, delim string) []Case {
 }
 
 func TestXstrings(t *testing.T) {
+	t.Parallel()
 	t.Run("String Functions", func(t *testing.T) {
+		t.Parallel()
 		camelTestCases := []Case{
 			{"test_case", "TestCase"},
 			{"test.case", "TestCase"},
@@ -142,10 +144,25 @@ func TestXstrings(t *testing.T) {
 				Func:  func(s string) string { return xstrings.Camel(s, xstrings.WithLowerCamel(true)) },
 				Cases: expectInLowerCamel(camelTestCases),
 			},
+			{
+				Name: "FirstNRunes",
+				Func: func(s string) string { return xstrings.FirstNRunes(s, 3) },
+				Cases: []Case{
+					{
+						Src:      "ビーフストロガノフ",
+						Expected: "ビーフ",
+					},
+					{
+						Src:      "1二3四",
+						Expected: "1二3",
+					},
+				},
+			},
 		}
 		for _, tc := range testcases {
 			tc := tc
 			t.Run(tc.Name, func(t *testing.T) {
+				t.Parallel()
 				for _, c := range tc.Cases {
 					c := c
 					t.Run(c.Src, func(t *testing.T) {
