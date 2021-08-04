@@ -275,6 +275,5 @@ func FirstNRunes(s string, n int) string {
 		n--
 	}
 
-	// Can't reach here...
 	return b.String()
 }
