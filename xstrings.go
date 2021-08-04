@@ -268,14 +268,11 @@ func FirstNRunes(s string, n int) string {
 	}
 
 	var b strings.Builder
-	var count int
-	for len(s) > 0 {
+	for n > 0 {
 		r, w := utf8.DecodeRuneInString(s)
 		b.WriteRune(r)
-		if count++; count >= n {
-			return b.String()
-		}
 		s = s[w:]
+		n--
 	}
 
 	// Can't reach here...
