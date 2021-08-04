@@ -49,7 +49,7 @@ func expectInAlternateDelimiter(cases []Case, delim string) []Case {
 	return ret
 }
 
-func TestXstrings(t *testing.T) {
+func TestXstringsCase(t *testing.T) {
 	t.Parallel()
 	t.Run("String Functions", func(t *testing.T) {
 		t.Parallel()
@@ -174,4 +174,45 @@ func TestXstrings(t *testing.T) {
 			})
 		}
 	})
+}
+
+func TestXstringsFirstNRunes(t *testing.T) {
+	tests := []struct {
+		input string
+		n     int
+		want  string
+	}{
+		{
+			input: "伯方の塩",
+			n:     2,
+			want:  "伯方",
+		},
+		{
+			input: "伯方の塩",
+			n:     1,
+			want:  "伯",
+		},
+		{
+			input: "伯方の塩",
+			n:     0,
+			want:  "",
+		},
+		{
+			input: "伯方の塩",
+			n:     -1,
+			want:  "",
+		},
+		{
+			input: "伯方の塩",
+			n:     5,
+			want:  "伯方の塩",
+		},
+	}
+
+	for _, test := range tests {
+		got := xstrings.FirstNRunes(test.input, test.n)
+		if got != test.want {
+			t.Fatalf("want %q for input=%q and n=%d, but got %q", test.want, test.input, test.n, got)
+		}
+	}
 }
