@@ -254,3 +254,30 @@ func Snake(s string, options ...SnakeOption) string {
 
 	return b.String()
 }
+
+// Returns the string consisting of the first `n` runes found.
+//
+// It is the caller's responsibility to ensure that the string
+// contains valid runes throughout. If a rune cannot be decoded,
+// utf8.RuneError will be used in its place.
+//
+// If `n` exceeds the number of runes in string `s`, `s` is returned unmodified.
+func FirstNRunes(s string, n int) string {
+	if utf8.RuneCountInString(s) <= n {
+		return s
+	}
+
+	var b strings.Builder
+	var count int
+	for len(s) > 0 {
+		r, w := utf8.DecodeRuneInString(s)
+		b.WriteRune(r)
+		if count++; count >= n {
+			return b.String()
+		}
+		s = s[w:]
+	}
+
+	// Can't reach here...
+	return b.String()
+}
