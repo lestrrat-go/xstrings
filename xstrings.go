@@ -263,17 +263,12 @@ func Snake(s string, options ...SnakeOption) string {
 //
 // If `n` exceeds the number of runes in string `s`, `s` is returned unmodified.
 func FirstNRunes(s string, n int) string {
-	if utf8.RuneCountInString(s) <= n {
-		return s
+	j := 0
+	for i := range s {
+		j++
+		if j > n {
+			return s[:i]
+		}
 	}
-
-	var b strings.Builder
-	for n > 0 {
-		r, w := utf8.DecodeRuneInString(s)
-		b.WriteRune(r)
-		s = s[w:]
-		n--
-	}
-
-	return b.String()
+	return s
 }
