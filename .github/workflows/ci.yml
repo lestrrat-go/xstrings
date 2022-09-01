@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.16.x', '1.15.x' ]
+        go: [ '1.19.x', '1.18.x' ]
     name: "Test [ Go ${{ matrix.go }} ]"
     steps:
       - name: Checkout repository
